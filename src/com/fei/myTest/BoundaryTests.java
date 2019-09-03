@@ -1,29 +1,18 @@
 package com.fei.myTest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.FileSystems;
-import java.util.Random;
-
 import com.fei.PassBook;
 import com.fei.myException.*;
 import org.junit.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 //By extending PartitioningTests, we inherit tests from the script
 public class BoundaryTests extends PartitioningTests
 {
-    protected PassBook pb;
-
-    @Before public void setUp() throws WeakPassphraseException, DuplicateUserException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
-        pb = new PassBook();
-    }
-
     @Test(expected = DuplicateUserException.class)
     public void test_EC1_1() throws WeakPassphraseException, DuplicateUserException {
         pb.addUser("Chris","Chris123");
@@ -48,14 +37,20 @@ public class BoundaryTests extends PartitioningTests
 
 
 
+    /**
+     * mutant-2
+     */
     @Test(expected = WeakPassphraseException.class)
     public void test_EC3_1() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","ABCD1234");
+        pb.addUser("Mary","{ABC1234");
     }
 
+    /**
+     * mutant-1
+     */
     @Test
     public void test_EC3_2() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","abcABC123");
+        pb.addUser("Mary","abcABC999");
     }
 
     @Test(expected = WeakPassphraseException.class)
@@ -63,9 +58,12 @@ public class BoundaryTests extends PartitioningTests
         pb.addUser("Mary","abcd1234");
     }
 
+    /**
+     * mutant-3
+     */
     @Test
     public void test_EC4_2() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","abcABC123");
+        pb.addUser("Mary","abcdABC1");
     }
 
     @Test(expected = WeakPassphraseException.class)
@@ -73,9 +71,12 @@ public class BoundaryTests extends PartitioningTests
         pb.addUser("Mary","abcdABCD");
     }
 
+    /**
+     * mutant-5
+     */
     @Test
     public void test_EC5_2() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","abcABC123");
+        pb.addUser("Mary","abcAAA999");
     }
 
     @Test(expected = NoSuchUserException.class)
@@ -120,9 +121,7 @@ public class BoundaryTests extends PartitioningTests
     @Test(expected = InvalidSessionIDException.class)
     public void test_EC11_1() throws MalformedURLException, InvalidSessionIDException {
         Integer wrongSession=null;
-        while(wrongSession!=null && pb.getSessionIDs().containsKey(wrongSession)){
-            wrongSession = new Random().nextInt(Integer.MAX_VALUE);
-        }
+        wrongSession = new Random().nextInt(Integer.MAX_VALUE);
         pb.updateDetails(wrongSession,new URL("http://www.google.com"),"Chris","Chris123");
     }
 

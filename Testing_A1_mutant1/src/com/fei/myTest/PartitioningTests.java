@@ -110,12 +110,15 @@ public class PartitioningTests
         pb.updateDetails(sessionOfMary, new URL("ftp://www.google.com"),null,null);
     }
 
-    @Test
-    public void test_EC14() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    /**
+     * mutant-4
+     */
+    @Test(expected = NoSuchURLException.class)
+    public void test_EC14() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, NoSuchURLException {
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
-        pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy","123");
-        //delete
         pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy",null);
+
+        pb.retrieveDetails (sessionOfMary, new URL("https://www.google.com"));
     }
 
     @Test

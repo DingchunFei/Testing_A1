@@ -64,37 +64,37 @@ public class PassBook
         sessionIDs = new HashMap<String, Integer>();
     }
 
-    public Map<String, String> getPassphrases() {
-        return passphrases;
-    }
-
-    public void setPassphrases(Map<String, String> passphrases) {
-        this.passphrases = passphrases;
-    }
-
-    public Map<String, PasswordTable> getDetails() {
-        return details;
-    }
-
-    public void setDetails(Map<String, PasswordTable> details) {
-        this.details = details;
-    }
-
-    public Map<Integer, String> getUserIDs() {
-        return userIDs;
-    }
-
-    public void setUserIDs(Map<Integer, String> userIDs) {
-        this.userIDs = userIDs;
-    }
-
-    public Map<String, Integer> getSessionIDs() {
-        return sessionIDs;
-    }
-
-    public void setSessionIDs(Map<String, Integer> sessionIDs) {
-        this.sessionIDs = sessionIDs;
-    }
+//    public Map<String, String> getPassphrases() {
+//        return passphrases;
+//    }
+//
+//    public void setPassphrases(Map<String, String> passphrases) {
+//        this.passphrases = passphrases;
+//    }
+//
+//    public Map<String, PasswordTable> getDetails() {
+//        return details;
+//    }
+//
+//    public void setDetails(Map<String, PasswordTable> details) {
+//        this.details = details;
+//    }
+//
+//    public Map<Integer, String> getUserIDs() {
+//        return userIDs;
+//    }
+//
+//    public void setUserIDs(Map<Integer, String> userIDs) {
+//        this.userIDs = userIDs;
+//    }
+//
+//    public Map<String, Integer> getSessionIDs() {
+//        return sessionIDs;
+//    }
+//
+//    public void setSessionIDs(Map<String, Integer> sessionIDs) {
+//        this.sessionIDs = sessionIDs;
+//    }
 
     /**
      * Adds a new user to the passbook.

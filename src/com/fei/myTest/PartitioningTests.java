@@ -1,18 +1,13 @@
 package com.fei.myTest;
 
-import java.net.MalformedURLException;
-import java.util.List;
-import java.util.ArrayList;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.FileSystems;
-import java.util.Random;
-import java.net.URL;
-
 import com.fei.PassBook;
 import com.fei.myException.*;
 import org.junit.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 
@@ -24,9 +19,6 @@ public class PartitioningTests
     //allowing the tester to set up some shared resources.
     @Before public void setUp() throws WeakPassphraseException, DuplicateUserException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
         pb = new PassBook();
-        pb.addUser("Jessica","1234ABCDabcd");
-        pb.addUser("Chris","Chris123");
-        pb.addUser("Mary","abcd1234ABCD");
     }
 
 /*    @Test
@@ -39,10 +31,12 @@ public class PartitioningTests
     @Test(expected = DuplicateUserException.class)
     public void test_EC1() throws WeakPassphraseException, DuplicateUserException {
         pb.addUser("Jessica","1234ABCDabcd");
+        pb.addUser("Jessica","1234ABCDabcd");
     }
 
     @Test(expected = WeakPassphraseException.class)
     public void test_EC2() throws WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Jessica","1234ABCDabcd");
         pb.addUser("Bob","12ABabc");
     }
 
@@ -75,18 +69,21 @@ public class PartitioningTests
     }
 
     @Test(expected = AlreadyLoggedInException.class)
-    public void test_EC8() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC8() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         pb.loginUser("Mary","abcd1234ABCD");
         pb.loginUser("Mary","abcd1234ABCD");
     }
 
     @Test(expected = IncorrectPassphraseException.class)
-    public void test_EC9() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC9() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Chris","Chris123");
         pb.loginUser("Chris","AasdDd1234");
     }
 
     @Test
-    public void test_EC10() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC10() throws NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Chris","Chris123");
         pb.loginUser("Chris","Chris123");
     }
 
@@ -97,34 +94,39 @@ public class PartitioningTests
     public void test_EC11() throws MalformedURLException, InvalidSessionIDException {
         //产生一个不存在的session
         Integer wrongSession=null;
-        while(wrongSession!=null && pb.getSessionIDs().containsKey(wrongSession)){
-            wrongSession = new Random().nextInt(Integer.MAX_VALUE);
-        }
+        wrongSession = new Random().nextInt(Integer.MAX_VALUE);
         pb.updateDetails(wrongSession, new URL("http://www.google.com"),null,null);
     }
 
     @Test
-    public void test_EC12() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC12() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("http://www.google.com"),null,null);
     }
 
     @Test(expected = MalformedURLException.class)
-    public void test_EC13() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC13() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("ftp://www.google.com"),null,null);
     }
 
-    @Test
-    public void test_EC14() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    /**
+     * mutant-4
+     */
+    @Test(expected = NoSuchURLException.class)
+    public void test_EC14() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, NoSuchURLException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
-        pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy","123");
-        //delete
         pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy",null);
+
+        pb.retrieveDetails (sessionOfMary, new URL("https://www.google.com"));
     }
 
     @Test
-    public void test_EC15() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC15() throws MalformedURLException, InvalidSessionIDException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy","123");
     }
@@ -136,40 +138,44 @@ public class PartitioningTests
     public void test_EC16() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException {
         //产生一个不存在的session
         Integer wrongSession=null;
-        while(wrongSession!=null && pb.getSessionIDs().containsKey(wrongSession)){
-            wrongSession = new Random().nextInt(Integer.MAX_VALUE);
-        }
+        wrongSession = new Random().nextInt(Integer.MAX_VALUE);
+
         pb.retrieveDetails(wrongSession, new URL("https://www.google.com"));
     }
 
     @Test
-    public void test_EC17() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC17() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("http://www.google.com"),"Maryy","123");
         pb.retrieveDetails(sessionOfMary, new URL("http://www.google.com"));
     }
 
     @Test(expected = MalformedURLException.class)
-    public void test_EC18() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC18() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.retrieveDetails(sessionOfMary, new URL("ftp://www.google.com"));
     }
 
     @Test(expected = NoSuchURLException.class)
-    public void test_EC19() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC19() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.retrieveDetails(sessionOfMary, new URL("https://www.youtube.com"));
     }
 
     @Test(expected = NoSuchURLException.class)
-    public void test_EC20() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC20() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("http://www.google.com"),"Maryy","123");
         pb.retrieveDetails(sessionOfMary, new URL("https://www.youtube.com"));
     }
 
     @Test
-    public void test_EC21() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException {
+    public void test_EC21() throws MalformedURLException, InvalidSessionIDException, NoSuchURLException, NoSuchUserException, AlreadyLoggedInException, IncorrectPassphraseException, WeakPassphraseException, DuplicateUserException {
+        pb.addUser("Mary","abcd1234ABCD");
         Integer sessionOfMary = pb.loginUser("Mary","abcd1234ABCD");
         pb.updateDetails(sessionOfMary, new URL("https://www.google.com"),"Maryy","123");
         pb.retrieveDetails(sessionOfMary, new URL("https://www.google.com"));

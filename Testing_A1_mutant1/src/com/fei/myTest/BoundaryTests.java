@@ -43,13 +43,16 @@ public class BoundaryTests //extends PartitioningTests
 
 
 
+    /**
+     * mutant-2
+     */
     @Test(expected = WeakPassphraseException.class)
     public void test_EC3_1() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","ABCD1234");
+        pb.addUser("Mary","{ABC1234");
     }
 
     /**
-     * here
+     * mutant-1
      */
     @Test
     public void test_EC3_2() throws WeakPassphraseException, DuplicateUserException {
@@ -61,9 +64,12 @@ public class BoundaryTests //extends PartitioningTests
         pb.addUser("Mary","abcd1234");
     }
 
+    /**
+     * mutant-3
+     */
     @Test
     public void test_EC4_2() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","abcABC123");
+        pb.addUser("Mary","abcdABC1");
     }
 
     @Test(expected = WeakPassphraseException.class)
@@ -71,9 +77,12 @@ public class BoundaryTests //extends PartitioningTests
         pb.addUser("Mary","abcdABCD");
     }
 
+    /**
+     * mutant-5
+     */
     @Test
     public void test_EC5_2() throws WeakPassphraseException, DuplicateUserException {
-        pb.addUser("Mary","abcABC123");
+        pb.addUser("Mary","abcAAA999");
     }
 
     @Test(expected = NoSuchUserException.class)
